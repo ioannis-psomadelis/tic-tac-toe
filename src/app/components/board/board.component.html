@@ -1,1 +1,31 @@
-<h1 class="text-3xl font-bold underline">Board works!</h1>
+@let boardSize = (boardSize$ | async);
+{{boardSize}}
+@if (boardSize$ | async) {
+
+    <div>
+        <div
+            class="grid gap-4"
+            [ngStyle]="{
+                'grid-template-columns':
+                    'repeat(' + (boardSize?.[1] ?? 1) + ', 1fr)',
+            }"
+        >
+            <ng-container
+                *ngFor="
+                    let rowIndex of [].constructor(boardSize?.[0] ?? 0);
+                    let rowIdx = index
+                "
+            >
+                <ng-container
+                    *ngFor="
+                        let cellIndex of [].constructor(boardSize?.[1] ?? 0);
+                        let cellIdx = index
+                    "
+                >
+                    <app-cell (click)="handleSquareClick(rowIdx, cellIdx)">
+                    </app-cell>
+                </ng-container>
+            </ng-container>
+        </div>
+    </div>
+}

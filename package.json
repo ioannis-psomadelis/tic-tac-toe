@@ -2,6 +2,7 @@
   "name": "tic-tac-toe",
   "version": "0.0.0",
   "scripts": {
+    "build-css": "npx tailwindcss -i ./src/styles.scss -o ./public/styles.css --watch",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
@@ -41,6 +42,7 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "postcss": "^8.4.39",
     "tailwind": "^4.0.0",
+    "tailwindcss": "^3.4.6",
     "typescript": "~5.4.2"
   }
 }
