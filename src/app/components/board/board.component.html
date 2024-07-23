@@ -18,7 +18,7 @@
         @for (row of boardContent; track row; let rowIndex = $index) {
             @for (col of boardContent; track col; let colIndex = $index) {
                 <app-cell
-                    class="border border-gray-800 p-3 border-t-0 border-l-0"
+                    class="border border-gray-800 p-3 border-t-0 border-l-0 min-w-24"
                     [ngClass]="{
                         'border-b-0':
                             rowIndex === (boardContent?.length ?? 0) - 1,

@@ -1,5 +1,6 @@
 @if (winner() === 'X' || winner() === 'O') {
     <app-info-box
+        [severity]="'success'"
         [message]="
             winner() === 'X'
                 ? 'Congratulations, X player won!'
@@ -8,10 +9,12 @@
     ></app-info-box>
 } @else if (winner() === 'none') {
     <app-info-box
+        [severity]="'warning'"
         [message]="'It is a draw, no one won. Play again!'"
     ></app-info-box>
 } @else if (currentPlayer() === 'X' || currentPlayer() === 'O') {
     <app-info-box
+        [severity]="'info'"
         [message]="
             currentPlayer() === 'X'
                 ? 'It is your turn to play : X'

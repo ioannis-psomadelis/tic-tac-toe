@@ -53,6 +53,7 @@
 </div>
 @if (canCreateGame() || canChangeGame()) {
     <app-info-box
+        [severity]="'info'"
         message="Create a new game to start playing. Good luck!"
     ></app-info-box>
 }
