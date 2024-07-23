@@ -1,28 +1,37 @@
-@let board = (boardSize$ | async);
-{{'BoardSize:'}}{{board}}
+@let board = boardSize$ | async;
+@let boardContent = boardContent$ | async;
 
-@let boardContent = (boardContent$ | async);
-@let currentPlayer = (currentPlayer$ | async);
-<br>
-{{'boardContent:'}} {{boardContent | json}}
+<!--{{ 'BoardSize:' }}{{ board }}-->
+<!--<br />-->
+<!--{{ 'boardContent:' }} {{ boardContent | json }}-->
 
-@if (board) {
-        <div
-         class="grid gap-4"
+@if (board && boardContent ) {
+    <div
+        class="grid"
         [ngStyle]="{
-        'grid-template-columns': 'repeat(' + (boardContent && boardContent[0] ? boardContent[0].length : 0) + ', 1fr)'
-      }"
-        >
-
-            @for(row of boardContent; track row; let rowIndex = $index) {
-                @for(col of boardContent; track col; let colIndex = $index) {
-
-                    <app-cell
-                        [value]="row[colIndex]"
-                        (clicked)="handleSquareClick(rowIndex, colIndex)"
-                    >
-                    </app-cell>
-                }
+            'grid-template-columns':
+                'repeat(' +
+                (boardContent && boardContent[0] ? boardContent[0].length : 0) +
+                ', 1fr)',
+        }"
+    >
+        @for (row of boardContent; track row; let rowIndex = $index) {
+            @for (col of boardContent; track col; let colIndex = $index) {
+                <app-cell
+                    class="border border-gray-800 p-3 border-t-0 border-l-0"
+                    [ngClass]="{
+                        'border-b-0':
+                            rowIndex === (boardContent?.length ?? 0) - 1,
+                        'border-r-0':
+                            colIndex === (boardContent?.[0]?.length ?? 0) - 1,
+                    }"
+                    [canClick]="canClick(rowIndex, colIndex)"
+                    [canCreateGame]="canCreateGame()"
+                    [value]="row[colIndex]"
+                    (clicked)="handleSquareClick(rowIndex, colIndex)"
+                >
+                </app-cell>
             }
-        </div>
+        }
+    </div>
 }

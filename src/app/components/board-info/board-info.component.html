@@ -11,7 +11,7 @@
                         id="boardSize"
                         formControlName="boardSize"
                         [ngClass]="
-                            !canChangeGame()
+                            !(canChangeGame() || canCreateGame())
                                 ? ' disabled opacity-70 disabled:border-0 disabled:bg-blue-gray-400'
                                 : ''
                         "
@@ -20,7 +20,9 @@
                         @for (boardSize of tableSizes; track boardSize) {
                             <option
                                 [ngValue]="boardSize"
-                                [disabled]="!canChangeGame()"
+                                [disabled]="
+                                    !(canChangeGame() || canCreateGame())
+                                "
                             >
                                 {{ boardSize }}
                             </option>
@@ -34,18 +36,22 @@
                     </label>
                 </div>
                 <button
-                    class="w-full bg-gray-800 hover:bg-gray-500 text-white p-2 rounded-lg"
+                    class="w-full bg-gray-800 hover:bg-gray-500 text-white p-3 rounded-lg"
                     (click)="onStartGame()"
                     [ngClass]="
-                        !canChangeGame()
+                        !(canChangeGame() || canCreateGame())
                             ? 'disabled:hover:bg-gray-800 disabled:opacity-50'
                             : ''
                     "
-                    [disabled]="!canChangeGame()"
+                    [disabled]="!(canChangeGame() || canCreateGame())"
                 >
                     Play
                 </button>
             </div>
         </div>
     </div>
+
 </div>
+@if (canCreateGame() || canChangeGame()) {
+    <app-info-box message="Create a new game to start playing. Good luck!"></app-info-box>
+}

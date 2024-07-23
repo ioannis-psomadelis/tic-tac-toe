@@ -1,8 +1,14 @@
-import { Component, inject, OnInit, output } from '@angular/core'
-import { CellComponent } from '../cell/cell.component'
+//Common
+import { Component, DestroyRef, inject, input, OnInit } from '@angular/core'
 import { CommonModule, NgFor, NgStyle } from '@angular/common'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
+
+//Component
+import { CellComponent } from '../cell/cell.component'
+
+//State
 import { BoardFacade } from '../../+state/board.facade'
-import { Subject, takeUntil } from 'rxjs'
+import { BoardState } from '../../+state/board.state'
 
 @Component({
     selector: 'app-board',
@@ -13,22 +19,48 @@ import { Subject, takeUntil } from 'rxjs'
 })
 export class BoardComponent implements OnInit {
     boardFacade = inject(BoardFacade)
+    destroyRef = inject(DestroyRef)
+
     boardSize$ = this.boardFacade.boardSize$
     boardContent$ = this.boardFacade.boardContent$
     currentPlayer$ = this.boardFacade.currentPlayer$
-    private destroy$ = new Subject<void>()
+    winner$ = this.boardFacade.winner$
+
+    //use local vars using state interfaces
+    boardContent!: BoardState['boardContent']
+    currentPlayer!: BoardState['currentPlayer']
+
+    canCreateGame = input.required<boolean>()
 
     ngOnInit(): void {
-        // Subscribe to boardContent$ to react to changes
+        //feed to child and helper
         this.boardContent$
-            .pipe(takeUntil(this.destroy$))
+            .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((boardContent) => {
-                debugger
-                console.log(boardContent)
+                this.boardContent = boardContent
+                console.log(this.boardContent)
+            })
+        this.currentPlayer$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((currentPlayer) => {
+                this.currentPlayer = currentPlayer
+                console.log(this.currentPlayer)
             })
     }
 
     handleSquareClick(row: number, col: number): void {
+        if (!this.canClick(row, col)) {
+            return
+        }
         this.boardFacade.playerMove([row, col])
+    }
+
+    canClick(row: number, col: number): boolean {
+        //check if cell is empty or current player to disable click
+        return !(
+            this.boardContent?.[row]?.[col] === 'X' ||
+            this.boardContent?.[row]?.[col] === 'O' ||
+            this.currentPlayer === null
+        )
     }
 }

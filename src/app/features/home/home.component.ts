@@ -5,7 +5,7 @@ import { AsyncPipe } from '@angular/common'
 import { BoardInfoComponent } from '../../components/board-info/board-info.component'
 import { BoardPlayerComponent } from '../../components/board-player/board-player.component'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
-import { Utils } from '../../shared/utils'
+import { Utils } from '../../shared/utils/utils'
 
 @Component({
     selector: 'app-home',
@@ -24,28 +24,34 @@ export class HomeComponent implements OnInit {
     destroyRef = inject(DestroyRef)
     currentPlayer$ = this.boardFacade.currentPlayer$
     boardSize$ = this.boardFacade.boardSize$
+    winner$ = this.boardFacade.winner$
+
     canChangeGame = true
+    canCreateGame = true
 
     ngOnInit() {
         this.handleCanChangeGame()
     }
 
     handleStartGame(event: number): void {
-        debugger
         this.boardFacade.setBoard(event)
-
         this.boardFacade.setCurrentPlayer(Utils.setRandomPlayer() as 'X' | 'O')
     }
 
     handleCanChangeGame(): boolean {
-        debugger
+        this.boardFacade.winner$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((winner) => {
+                this.canCreateGame = winner === 'X' || winner === 'O'
+            })
+
         this.boardFacade.currentPlayer$
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((player) => {
-                return (this.canChangeGame = !(
-                    player === 'X' || player === 'O'
-                ))
+                this.canChangeGame = !(player === 'X' || player === 'O')
             })
-        return this.canChangeGame
+
+        debugger
+        return this.canChangeGame && this.canCreateGame
     }
 }

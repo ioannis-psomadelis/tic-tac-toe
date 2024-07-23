@@ -10,13 +10,19 @@ import {
     selectBoard,
 } from './board.selectors'
 import { BoardState } from './board.state'
-import { Utils } from '../shared/utils'
+import { Utils } from '../shared/utils/utils'
+import { GameLogicService } from '../shared/services/game-logic/game-logic.service'
+import { LocalStorageService } from '../shared/services/local-storage/local-storage.service'
 
 @Injectable({
     providedIn: 'root',
 })
 export class BoardFacade {
+    private readonly KEY = 'tic-tac-toe'
+
     #store = inject(Store)
+    gameLogic = inject(GameLogicService)
+    localStorageService = inject(LocalStorageService)
 
     boardContent$: Observable<BoardState['boardContent']>
     boardSize$: Observable<BoardState['boardSize']>
@@ -28,6 +34,9 @@ export class BoardFacade {
         this.boardContent$ = this.#store.select(selectBoard)
         this.currentPlayer$ = this.#store.select(selectCurrentPlayer)
         this.winner$ = this.#store.select(selectWinner)
+
+        ///Init local storage
+        this.loadStateFromLocalStorage()
     }
 
     setBoard(boardSize: number) {
@@ -43,6 +52,8 @@ export class BoardFacade {
         )
         this.#store.dispatch(boardActions.setCurrentPlayer({ player: null }))
         debugger
+
+        this.saveStateToLocalStorage()
     }
 
     setEndRound(winner: 'X' | 'O' | 'none') {
@@ -51,10 +62,14 @@ export class BoardFacade {
         } else {
             this.#store.dispatch(boardActions.setWinner({ winner }))
         }
+
+        this.saveStateToLocalStorage()
     }
 
     setCurrentPlayer(player: 'X' | 'O' | null) {
         this.#store.dispatch(boardActions.setCurrentPlayer({ player }))
+
+        this.saveStateToLocalStorage()
     }
 
     playerMove(move: [number, number]) {
@@ -83,86 +98,56 @@ export class BoardFacade {
                         })
                     )
 
-                    //check winner
-                    const winner = this.checkWinner(
+                    const winner = this.gameLogic.checkWinner(
                         updatedBoardContent,
-                        currentPlayer,
-                        row,
-                        col
+                        currentPlayer
                     )
 
                     //if winner else check draw and set current player
                     if (winner) {
-                        // this.setWinner(currentPlayer, winner)
+                        this.setEndRound(currentPlayer)
                     } else if (this.checkDraw(updatedBoardContent)) {
                         this.setEndRound('none')
                     } else {
                         this.setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X')
                     }
+
+                    this.saveStateToLocalStorage()
                 }
             })
     }
 
-    private checkWinner(
-        board: ('X' | 'O' | null)[][],
-        player: 'X' | 'O',
-        row: number,
-        col: number
-    ): [number, number][] | null {
-        const size = board.length
-        const winLength = 5 // length of sequence needed to win
-
-        const directions = [
-            [
-                [0, 1],
-                [0, -1],
-            ], // horizontal
-            [
-                [1, 0],
-                [-1, 0],
-            ], // vertical
-            [
-                [1, 1],
-                [-1, -1],
-            ], // diagonal \
-            [
-                [1, -1],
-                [-1, 1],
-            ], // diagonal /
-        ]
-
-        for (const direction of directions) {
-            let count = 1
-            const path: [number, number][] = [[row, col]]
-
-            for (const [dx, dy] of direction) {
-                for (let i = 1; i < winLength; i++) {
-                    const newRow = row + dx * i
-                    const newCol = col + dy * i
-                    if (
-                        newRow >= 0 &&
-                        newRow < size &&
-                        newCol >= 0 &&
-                        newCol < size &&
-                        board[newRow][newCol] === player
-                    ) {
-                        count++
-                        path.push([newRow, newCol])
-                    } else {
-                        break
-                    }
-                }
-            }
-
-            if (count >= winLength) {
-                return path
-            }
-        }
-
-        return null
-    }
-
     private checkDraw(board: ('X' | 'O' | null)[][]): boolean {
         return board.every((row) => row.every((cell) => cell !== null))
+    }
+
+    //Game logic storage
+    private saveStateToLocalStorage(): void {
+        this.#store
+            .select(selectBoardState)
+            .pipe(take(1))
+            .subscribe((state) => {
+                this.localStorageService.setItem(this.KEY, state)
+            })
+    }
+
+    private loadStateFromLocalStorage(): void {
+        const state = this.localStorageService.getItem<BoardState>(this.KEY)
+        if (state) {
+            this.#store.dispatch(
+                boardActions.setBoardContent({
+                    boardContent: state.boardContent,
+                })
+            )
+            this.#store.dispatch(
+                boardActions.setBoardSize({ boardSize: state.boardSize })
+            )
+            this.#store.dispatch(
+                boardActions.setCurrentPlayer({ player: state.currentPlayer })
+            )
+            this.#store.dispatch(
+                boardActions.setWinner({ winner: state.winner })
+            )
+        }
     }
 }

@@ -1,6 +1,7 @@
-import { Component, inject, input, output } from '@angular/core'
+import { Component, inject, input, OnInit, output } from '@angular/core'
 import { BoardFacade } from '../../+state/board.facade'
 import { CommonModule } from '@angular/common'
+import { BoardState } from '../../+state/board.state'
 
 @Component({
     selector: 'app-cell',
@@ -9,30 +10,21 @@ import { CommonModule } from '@angular/common'
     templateUrl: './cell.component.html',
     styleUrl: './cell.component.scss',
 })
-export class CellComponent {
+export class CellComponent implements OnInit {
     boardFacade = inject(BoardFacade)
 
-    currentPlayer$ = this.boardFacade.currentPlayer$
-    currentPlayer!: 'X' | 'O' | null
+    boardContent$ = this.boardFacade.boardContent$
 
-    value = input.required<'X' | 'O' | null>()
+    value = input.required<BoardState['currentPlayer']>()
+    canClick = input.required<boolean>()
+    canCreateGame = input.required<boolean>()
+
     clicked = output<void>()
     // @Output() click = new EventEmitter<void>();
 
-    ngOnInit() {
-        this.boardFacade.currentPlayer$.subscribe((player) => {
-            this.currentPlayer = player
-        })
-        // this.currentPlayer$.subscribe((player) => {
-        //     console.log(player)
-        // })
-    }
+    ngOnInit() {}
 
     onClick() {
-        debugger
-        if (this.currentPlayer === null) {
-            return
-        }
         this.clicked.emit()
     }
 }

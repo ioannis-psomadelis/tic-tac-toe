@@ -1,14 +1,17 @@
 <div
-    class="items-center bg-white rounded-lg p-8 shadow-lg w-10/12 h-full mx-auto"
+    class="mt-10 items-center bg-white rounded-lg p-8 shadow-lg w-10/12 h-full mx-auto"
 >
-    @let currentPlayer = (currentPlayer$ | async);
-    @let boardSize = (boardSize$ | async);
+    <!-- Declare Variables with @let ( better visibility )-->
+    @let currentPlayer = currentPlayer$ | async;
+    @let boardSize = boardSize$ | async;
+    @let winner = winner$ | async;
 
     <app-board-info
-                    [canChangeGame]="canChangeGame"
-                    (startGame)="handleStartGame($event)"
-                    >
+        [canChangeGame]="canChangeGame"
+        [canCreateGame]="canCreateGame"
+        (startGame)="handleStartGame($event)"
+    >
     </app-board-info>
-    <app-board></app-board>
-    <app-board-player [currentPlayer]="currentPlayer"></app-board-player>
+    <app-board  [canCreateGame]="canCreateGame"></app-board>
+    <app-board-player [currentPlayer]="currentPlayer" [winner]="winner"></app-board-player>
 </div>
