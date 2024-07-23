@@ -1,31 +1,28 @@
-@let boardSize = (boardSize$ | async);
-{{boardSize}}
-@if (boardSize$ | async) {
+@let board = (boardSize$ | async);
+{{'BoardSize:'}}{{board}}
 
-    <div>
+@let boardContent = (boardContent$ | async);
+@let currentPlayer = (currentPlayer$ | async);
+<br>
+{{'boardContent:'}} {{boardContent | json}}
+
+@if (board) {
         <div
-            class="grid gap-4"
-            [ngStyle]="{
-                'grid-template-columns':
-                    'repeat(' + (boardSize?.[1] ?? 1) + ', 1fr)',
-            }"
+         class="grid gap-4"
+        [ngStyle]="{
+        'grid-template-columns': 'repeat(' + (boardContent && boardContent[0] ? boardContent[0].length : 0) + ', 1fr)'
+      }"
         >
-            <ng-container
-                *ngFor="
-                    let rowIndex of [].constructor(boardSize?.[0] ?? 0);
-                    let rowIdx = index
-                "
-            >
-                <ng-container
-                    *ngFor="
-                        let cellIndex of [].constructor(boardSize?.[1] ?? 0);
-                        let cellIdx = index
-                    "
-                >
-                    <app-cell (click)="handleSquareClick(rowIdx, cellIdx)">
+
+            @for(row of boardContent; track row; let rowIndex = $index) {
+                @for(col of boardContent; track col; let colIndex = $index) {
+
+                    <app-cell
+                        [value]="row[colIndex]"
+                        (clicked)="handleSquareClick(rowIndex, colIndex)"
+                    >
                     </app-cell>
-                </ng-container>
-            </ng-container>
+                }
+            }
         </div>
-    </div>
 }

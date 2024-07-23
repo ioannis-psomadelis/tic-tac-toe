@@ -1,5 +1,8 @@
+@let currentPlayer = (currentPlayer$ | async);
 <button
-    class="bg-gray-300 hover:bg-gray-400 text-4xl font-bold rounded-lg h-24 flex items-center justify-center w-full"
+    [ngClass]="currentPlayer ? '' : 'disabled'"
+    class="bg-gray-300 hover:bg-gray-400
+    text-4xl font-bold rounded-lg h-24 flex items-center justify-center w-full"
     (click)="onClick()"
 >
     {{ value() }}

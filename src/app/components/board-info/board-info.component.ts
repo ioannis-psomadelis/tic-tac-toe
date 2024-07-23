@@ -1,33 +1,49 @@
-import { Component, inject } from '@angular/core'
+import { Component, inject, input, OnInit, output } from '@angular/core'
 import { BoardFacade } from '../../+state/board.facade'
+import {
+    FormBuilder,
+    FormControl,
+    FormGroup,
+    ReactiveFormsModule,
+} from '@angular/forms'
+import { Utils } from '../../shared/utils'
+import { NgClass } from '@angular/common'
 
 @Component({
     selector: 'app-board-info',
     standalone: true,
-    imports: [],
+    imports: [ReactiveFormsModule, NgClass],
     templateUrl: './board-info.component.html',
     styleUrl: './board-info.component.scss',
 })
-export class BoardInfoComponent {
+export class BoardInfoComponent implements OnInit {
     boardFacade = inject(BoardFacade)
-    tableSize = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+    tableSizes = [2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-    boardSize: [number, number] = [3, 3]
+    //Injects
+    fb = inject(FormBuilder)
 
-    handleBoardSizeChange(event: Event) {
-        const target = event.target as HTMLSelectElement
-        this.boardSize = [parseInt(target.value), parseInt(target.value)]
+    //Form
+    boardSizeForm!: FormGroup
+
+    //Inputs
+    canChangeGame = input.required<boolean>()
+
+    //Outputs
+    startGame = output<number>()
+
+    ngOnInit() {
+        this.initForm()
     }
 
-    startGame() {
-        this.boardFacade.resetGame()
-        this.boardFacade.setBoard(this.boardSize)
-        this.boardFacade.setCurrentPlayer(this.setRandomPlayer() as 'X' | 'O')
-        debugger
+    onStartGame() {
+        const size = this.boardSizeForm.get('boardSize')?.value
+        this.startGame.emit(size)
     }
 
-    setRandomPlayer() {
-        const player = ['X', 'O']
-        return player[Math.round(Math.random())]
+    initForm() {
+        this.boardSizeForm = this.fb.group({
+            boardSize: [3],
+        })
     }
 }

@@ -1,8 +1,7 @@
-@let currentPlayer = (player$ | async);
-@if (currentPlayer) {
+@if (currentPlayer() === 'X' || currentPlayer() === 'O') {
     <div class="flex flex-col items-center justify-center mt-5">
         <p class="text-center text-2xl font-bold">
-            Current Player : {{ currentPlayer }}
+            Current Player : {{ currentPlayer() }}
         </p>
     </div>
 }

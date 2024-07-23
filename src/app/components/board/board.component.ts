@@ -1,7 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core'
+import { Component, inject, OnInit, output } from '@angular/core'
 import { CellComponent } from '../cell/cell.component'
 import { CommonModule, NgFor, NgStyle } from '@angular/common'
 import { BoardFacade } from '../../+state/board.facade'
+import { Subject, takeUntil } from 'rxjs'
 
 @Component({
     selector: 'app-board',
@@ -13,24 +14,21 @@ import { BoardFacade } from '../../+state/board.facade'
 export class BoardComponent implements OnInit {
     boardFacade = inject(BoardFacade)
     boardSize$ = this.boardFacade.boardSize$
+    boardContent$ = this.boardFacade.boardContent$
     currentPlayer$ = this.boardFacade.currentPlayer$
-    winner$ = this.boardFacade.winner$
+    private destroy$ = new Subject<void>()
 
-    ngOnInit() {
-        this.initBoard()
+    ngOnInit(): void {
+        // Subscribe to boardContent$ to react to changes
+        this.boardContent$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((boardContent) => {
+                debugger
+                console.log(boardContent)
+            })
     }
 
-    initBoard() {}
-
-    handleSquareClick(row: number, col: number) {
-        debugger
+    handleSquareClick(row: number, col: number): void {
         this.boardFacade.playerMove([row, col])
-    }
-
-    decideWinner() {}
-
-    handleResetGame() {
-        // this.resetGame.emit()
-        this.initBoard()
     }
 }

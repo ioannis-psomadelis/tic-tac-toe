@@ -1,18 +1,38 @@
-import { Component, input, output } from '@angular/core'
+import { Component, inject, input, output } from '@angular/core'
+import { BoardFacade } from '../../+state/board.facade'
+import { CommonModule } from '@angular/common'
 
 @Component({
     selector: 'app-cell',
     standalone: true,
-    imports: [],
+    imports: [CommonModule],
     templateUrl: './cell.component.html',
     styleUrl: './cell.component.scss',
 })
 export class CellComponent {
-    value = input<number>()
+    boardFacade = inject(BoardFacade)
+
+    currentPlayer$ = this.boardFacade.currentPlayer$
+    currentPlayer!: 'X' | 'O' | null
+
+    value = input.required<'X' | 'O' | null>()
     clicked = output<void>()
     // @Output() click = new EventEmitter<void>();
 
+    ngOnInit() {
+        this.boardFacade.currentPlayer$.subscribe((player) => {
+            this.currentPlayer = player
+        })
+        // this.currentPlayer$.subscribe((player) => {
+        //     console.log(player)
+        // })
+    }
+
     onClick() {
+        debugger
+        if (this.currentPlayer === null) {
+            return
+        }
         this.clicked.emit()
     }
 }

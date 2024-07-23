@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { Observable } from 'rxjs'
+import { Observable, take } from 'rxjs'
 import { boardActions } from './board.actions'
 import {
     selectBoardSize,
@@ -10,6 +10,7 @@ import {
     selectBoard,
 } from './board.selectors'
 import { BoardState } from './board.state'
+import { Utils } from '../shared/utils'
 
 @Injectable({
     providedIn: 'root',
@@ -17,39 +18,31 @@ import { BoardState } from './board.state'
 export class BoardFacade {
     #store = inject(Store)
 
-    board$: Observable<BoardState['boardContent']>
+    boardContent$: Observable<BoardState['boardContent']>
     boardSize$: Observable<BoardState['boardSize']>
     currentPlayer$: Observable<BoardState['currentPlayer']>
     winner$: Observable<BoardState['winner']>
 
     constructor() {
         this.boardSize$ = this.#store.select(selectBoardSize)
-        this.board$ = this.#store.select(selectBoard)
+        this.boardContent$ = this.#store.select(selectBoard)
         this.currentPlayer$ = this.#store.select(selectCurrentPlayer)
         this.winner$ = this.#store.select(selectWinner)
     }
 
-    setBoard(boardSize: [number, number]) {
-        this.#store.dispatch(boardActions.setBoardSize({ boardSize }))
-        this.#store.dispatch(boardActions.setBoardContent({ boardContent: [] }))
-    }
-
-    resetGame(size: number = 3) {
-        const emptyBoard: ('X' | 'O' | null)[][] = Array.from(
-            { length: size },
-            () => Array(size).fill(null)
-        )
-        debugger
+    setBoard(boardSize: number) {
+        const emptyBoardContent = Utils.createEmptyBoard(boardSize)
         this.#store.dispatch(
-            boardActions.setBoardContent({ boardContent: emptyBoard })
+            boardActions.setBoardContent({ boardContent: emptyBoardContent })
         )
         this.#store.dispatch(
-            boardActions.resetGame({ boardSize: [size, size] })
+            boardActions.setBoardSize({ boardSize: [boardSize, boardSize] })
         )
         this.#store.dispatch(
-            boardActions.setBoardSize({ boardSize: [size, size] })
+            boardActions.resetGame({ boardSize: [boardSize, boardSize] })
         )
         this.#store.dispatch(boardActions.setCurrentPlayer({ player: null }))
+        debugger
     }
 
     setEndRound(winner: 'X' | 'O' | 'none') {
@@ -65,40 +58,49 @@ export class BoardFacade {
     }
 
     playerMove(move: [number, number]) {
-        this.#store.select(selectBoardState).subscribe((state) => {
-            const { boardContent, currentPlayer } = state
-            const [row, col] = move
-            debugger
-            if (
-                boardContent &&
-                boardContent[row][col] === null &&
-                currentPlayer
-            ) {
-                boardContent[row][col] = currentPlayer
+        this.#store
+            .select(selectBoardState)
+            .pipe(take(1))
+            .subscribe((state) => {
+                const { boardContent, currentPlayer } = state
+                const [row, col] = move
 
-                //set board move
-                this.#store.dispatch(
-                    boardActions.setBoardContent({ boardContent: boardContent })
-                )
+                if (boardContent && currentPlayer) {
+                    debugger
+                    const updatedBoardContent = boardContent.map(
+                        (rowArray, rowIndex) =>
+                            rowIndex === row
+                                ? rowArray.map((cell, colIndex) =>
+                                      colIndex === col ? currentPlayer : cell
+                                  )
+                                : rowArray
+                    )
 
-                //check winner
-                const winner = this.checkWinner(
-                    boardContent,
-                    currentPlayer,
-                    row,
-                    col
-                )
+                    //set board move
+                    this.#store.dispatch(
+                        boardActions.setBoardContent({
+                            boardContent: updatedBoardContent,
+                        })
+                    )
 
-                //if winner else check draw and set current player
-                if (winner) {
-                    // this.setWinner(currentPlayer, winner)
-                } else if (this.checkDraw(boardContent)) {
-                    this.setEndRound('none')
-                } else {
-                    this.setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X')
+                    //check winner
+                    const winner = this.checkWinner(
+                        updatedBoardContent,
+                        currentPlayer,
+                        row,
+                        col
+                    )
+
+                    //if winner else check draw and set current player
+                    if (winner) {
+                        // this.setWinner(currentPlayer, winner)
+                    } else if (this.checkDraw(updatedBoardContent)) {
+                        this.setEndRound('none')
+                    } else {
+                        this.setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X')
+                    }
                 }
-            }
-        })
+            })
     }
 
     private checkWinner(

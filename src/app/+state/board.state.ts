@@ -1,8 +1,8 @@
 //Board State
 
 export interface BoardState {
-    boardSize: [number, number] | null
-    boardContent: ('X' | 'O' | null)[][] | null
+    boardSize: [number, number]
+    boardContent: ('X' | 'O' | null)[][]
     winner: 'X' | 'O' | 'none' | null
     path: [number, number] | null
     currentPlayer: 'X' | 'O' | null
@@ -10,8 +10,12 @@ export interface BoardState {
 }
 
 export const initialState: BoardState = {
-    boardSize: null,
-    boardContent: null,
+    boardSize: [3, 3],
+    boardContent: [
+        [null, null, null],
+        [null, null, null],
+        [null, null, null],
+    ],
     winner: null,
     path: null,
     currentPlayer: null,

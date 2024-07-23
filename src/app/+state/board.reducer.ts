@@ -8,6 +8,10 @@ export const boardReducer = createReducer(
         ...state,
         boardSize,
     })),
+    on(boardActions.setBoardContent, (state, { boardContent }) => ({
+        ...state,
+        boardContent,
+    })),
     on(boardActions.resetGame, (state) => ({
         ...state,
         boardSize: initialState.boardSize,

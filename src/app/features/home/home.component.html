@@ -1,7 +1,14 @@
 <div
     class="items-center bg-white rounded-lg p-8 shadow-lg w-10/12 h-full mx-auto"
 >
-    <app-board-info></app-board-info>
+    @let currentPlayer = (currentPlayer$ | async);
+    @let boardSize = (boardSize$ | async);
+
+    <app-board-info
+                    [canChangeGame]="canChangeGame"
+                    (startGame)="handleStartGame($event)"
+                    >
+    </app-board-info>
     <app-board></app-board>
-    <app-board-player></app-board-player>
+    <app-board-player [currentPlayer]="currentPlayer"></app-board-player>
 </div>

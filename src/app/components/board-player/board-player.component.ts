@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core'
+import { Component, inject, input } from '@angular/core'
 import { BoardFacade } from '../../+state/board.facade'
 import { CommonModule } from '@angular/common'
 
@@ -10,6 +10,5 @@ import { CommonModule } from '@angular/common'
     styleUrl: './board-player.component.scss',
 })
 export class BoardPlayerComponent {
-    boardFacade = inject(BoardFacade)
-    player$ = this.boardFacade.currentPlayer$
+    currentPlayer = input.required<string | null>()
 }
