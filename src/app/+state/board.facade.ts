@@ -106,7 +106,8 @@ export class BoardFacade {
                     //if winner else check draw and set current player
                     if (winner) {
                         this.setEndRound(currentPlayer)
-                    } else if (this.checkDraw(updatedBoardContent)) {
+                    } else if (this.gameLogic.checkDraw(updatedBoardContent)) {
+                        debugger
                         this.setEndRound('none')
                     } else {
                         this.setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X')
@@ -115,10 +116,6 @@ export class BoardFacade {
                     this.saveStateToLocalStorage()
                 }
             })
-    }
-
-    private checkDraw(board: ('X' | 'O' | null)[][]): boolean {
-        return board.every((row) => row.every((cell) => cell !== null))
     }
 
     //Game logic storage

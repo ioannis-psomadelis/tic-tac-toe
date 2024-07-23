@@ -41,4 +41,15 @@ export class GameLogicService {
         }
         return false
     }
+
+    checkDraw(boardContent: ('X' | 'O' | null)[][]): boolean {
+        for (let i = 0; i < boardContent.length; i++) {
+            for (let j = 0; j < boardContent[0].length; j++) {
+                if (boardContent[i][j] === null) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
 }

@@ -42,7 +42,8 @@ export class HomeComponent implements OnInit {
         this.boardFacade.winner$
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((winner) => {
-                this.canCreateGame = winner === 'X' || winner === 'O'
+                this.canCreateGame =
+                    winner === 'X' || winner === 'O' || winner === 'none'
             })
 
         this.boardFacade.currentPlayer$
