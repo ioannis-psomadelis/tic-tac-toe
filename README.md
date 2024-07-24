@@ -21,4 +21,4 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The appli
 
 ### Live Showcase Demo
 
-https://tic-tac-toe-assessment.vercel.app/
+`https://tic-tac-toe-assessment.vercel.app/`
