@@ -12,12 +12,6 @@ export const boardReducer = createReducer(
         ...state,
         boardContent,
     })),
-    on(boardActions.resetGame, (state) => ({
-        ...state,
-        boardSize: initialState.boardSize,
-        winner: null,
-        path: null,
-    })),
     on(boardActions.setWinner, (state, { winner }) => ({
         ...state,
         winner,

@@ -11,6 +11,8 @@ import {
     selectWinPath,
 } from './board.selectors'
 import { BoardState } from './board.state'
+
+//SERVICES & UTILS
 import { Utils } from '../shared/utils/utils'
 import { GameLogicService } from '../shared/services/game-logic/game-logic.service'
 import { LocalStorageService } from '../shared/services/local-storage/local-storage.service'
@@ -53,7 +55,6 @@ export class BoardFacade {
         this.#store.dispatch(boardActions.setWinPath({ winPath: null }))
         this.#store.dispatch(boardActions.setWinner({ winner: null }))
         this.#store.dispatch(boardActions.setCurrentPlayer({ player: null }))
-        debugger
 
         this.saveStateToLocalStorage()
     }
@@ -104,7 +105,6 @@ export class BoardFacade {
                     if (winner) {
                         this.setEndRound(currentPlayer, path)
                     } else if (this.gameLogic.checkDraw(updatedBoardContent)) {
-                        debugger
                         this.setEndRound('none')
                     } else {
                         this.setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X')
@@ -115,7 +115,8 @@ export class BoardFacade {
             })
     }
 
-    //Game logic storage
+    //Game logic local storage
+    //select from #store and save whole state to local storage to key
     private saveStateToLocalStorage(): void {
         this.#store
             .select(selectBoardState)
@@ -125,6 +126,7 @@ export class BoardFacade {
             })
     }
 
+    //select from local storage and set state to #store
     private loadStateFromLocalStorage(): void {
         const state = this.localStorageService.getItem<BoardState>(this.KEY)
         if (state) {
@@ -141,6 +143,9 @@ export class BoardFacade {
             )
             this.#store.dispatch(
                 boardActions.setWinner({ winner: state.winner })
+            )
+            this.#store.dispatch(
+                boardActions.setWinPath({ winPath: state.winPath })
             )
         }
     }

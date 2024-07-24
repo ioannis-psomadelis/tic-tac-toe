@@ -1,5 +1,5 @@
 <div class="grid md:grid-cols-2 gap-6 items-center" [formGroup]="boardSizeForm">
-    <div class="relative h-10 w-auto min-w-[150px]">
+    <div class="relative h-12 w-auto min-w-[250px]">
         <select
             id="boardSize"
             name="boardSize"
@@ -30,7 +30,7 @@
         </label>
     </div>
     <button
-        class="w-full bg-gray-800 hover:bg-gray-500 text-white p-3 rounded-lg"
+        class="w-full bg-gray-800 hover:bg-gray-500 text-white p-2.5 rounded-lg"
         (click)="onStartGame()"
         [ngClass]="
             !(canChangeGame() || canCreateGame())

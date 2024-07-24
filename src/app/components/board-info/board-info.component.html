@@ -1,15 +1,12 @@
 <div class="flex mb-4 flex-col items-center justify-center">
-    <div class="flex flex-col items-center justify-center">
-        <div class="flex flex-col items-center justify-center">
-            <h1 class="text-3xl font-bold mb-6 text-center">Tic Tac Toe</h1>
-            <app-board-selection-form
-                [canChangeGame]="canChangeGame()"
-                [canCreateGame]="canCreateGame()"
-                (startGame)="handleStartGame($event)"
-                (changeBoardSize)="handleChangeBoardSize($event)"
-            ></app-board-selection-form>
-        </div>
-    </div>
+    <h1 class="text-3xl font-bold mb-6 text-center">Tic Tac Toe</h1>
+    <app-board-selection-form
+        [boardSize]="boardSize()"
+        [canChangeGame]="canChangeGame()"
+        [canCreateGame]="canCreateGame()"
+        (startGame)="handleStartGame($event)"
+        (changeBoardSize)="handleChangeBoardSize($event)"
+    ></app-board-selection-form>
 </div>
 @if (canCreateGame() || canChangeGame()) {
     <app-info-box

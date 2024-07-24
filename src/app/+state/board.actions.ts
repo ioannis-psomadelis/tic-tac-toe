@@ -4,18 +4,14 @@ import { createAction, props } from '@ngrx/store'
 export const boardActions = {
     setBoardSize: createAction(
         '[Board] Set Board Size',
-        props<{ boardSize: [number, number] }>()
+        props<{ boardSize: [number, number] | null }>()
     ),
     //Maybe move to playerActions
     setBoardContent: createAction(
         '[Board] Set Board Content',
         props<{ boardContent: ('X' | 'O' | null)[][] }>()
     ),
-    //Maybe Remove By empty board
-    resetGame: createAction(
-        '[Board] Reset Game',
-        props<{ boardSize: [number, number] }>()
-    ),
+
     //Winner -> maybe remove path?
     setWinner: createAction(
         '[Board] Set Winner',

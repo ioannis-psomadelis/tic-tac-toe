@@ -22,7 +22,6 @@ export class BoardComponent implements OnInit {
     destroyRef = inject(DestroyRef)
 
     //facade
-    boardSize$ = this.boardFacade.boardSize$
     boardContent$ = this.boardFacade.boardContent$
     winPath$ = this.boardFacade.winPath$
 
@@ -34,6 +33,7 @@ export class BoardComponent implements OnInit {
     canCreateGame = input.required<boolean>()
     winner = input.required<BoardState['winner']>()
     currentPlayer = input.required<BoardState['currentPlayer']>()
+    boardSize = input.required<BoardState['boardSize']>()
 
     ngOnInit(): void {
         //feed to child and helper
@@ -41,24 +41,22 @@ export class BoardComponent implements OnInit {
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((boardContent) => {
                 this.boardContent = boardContent
-                console.log(this.boardContent)
             })
         this.winPath$
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((winPath) => {
                 this.winPath = winPath
-                console.log(this.winPath)
             })
     }
 
     handleSquareClick(row: number, col: number): void {
-        if (!this.canClick(row, col)) {
+        if (!this.canClickCell(row, col)) {
             return
         }
         this.boardFacade.playerMove([row, col])
     }
 
-    canClick(row: number, col: number): boolean {
+    canClickCell(row: number, col: number): boolean {
         //check if cell is empty or current player to disable click
         return !(
             this.boardContent?.[row]?.[col] === 'X' ||
@@ -67,9 +65,13 @@ export class BoardComponent implements OnInit {
         )
     }
 
-    returnWinnerCells(row: number, col: number): boolean {
+    returnWinnerCells(boardRow: number, boardCol: number): boolean {
+        //check if winner path is set and if cell is in winner path return true to highlight cell
         if (this.winPath && (this.winner() === 'X' || this.winner() === 'O')) {
-            return this.winPath.some(([r, c]) => r === row && c === col)
+            return this.winPath.some(
+                ([winnerR, winnerC]) =>
+                    winnerR === boardRow && winnerC === boardCol
+            )
         } else {
             return false
         }

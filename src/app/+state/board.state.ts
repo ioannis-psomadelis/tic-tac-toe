@@ -1,7 +1,7 @@
 //Board State
 
 export interface BoardState {
-    boardSize: [number, number]
+    boardSize: [number, number] | null
     boardContent: ('X' | 'O' | null)[][]
     winner: 'X' | 'O' | 'none' | null
     winPath: [number, number][] | null

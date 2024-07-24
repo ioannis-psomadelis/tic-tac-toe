@@ -1,6 +1,6 @@
 //Common
-import { Component, inject, input, OnInit, output } from '@angular/core'
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms'
+import { Component, inject, input } from '@angular/core'
+import { ReactiveFormsModule } from '@angular/forms'
 import { NgClass } from '@angular/common'
 
 //State + interfaces
@@ -30,6 +30,7 @@ export class BoardInfoComponent {
     //Inputs
     canChangeGame = input.required<boolean>()
     canCreateGame = input.required<boolean>()
+    boardSize = input.required<BoardState['boardSize']>()
 
     handleStartGame(event: number): void {
         this.handleChangeBoardSize(event)
