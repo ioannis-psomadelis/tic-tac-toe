@@ -8,6 +8,7 @@ import {
     selectWinner,
     selectBoardState,
     selectBoard,
+    selectWinPath,
 } from './board.selectors'
 import { BoardState } from './board.state'
 import { Utils } from '../shared/utils/utils'
@@ -28,12 +29,14 @@ export class BoardFacade {
     boardSize$: Observable<BoardState['boardSize']>
     currentPlayer$: Observable<BoardState['currentPlayer']>
     winner$: Observable<BoardState['winner']>
+    winPath$: Observable<BoardState['winPath']>
 
     constructor() {
         this.boardSize$ = this.#store.select(selectBoardSize)
         this.boardContent$ = this.#store.select(selectBoard)
         this.currentPlayer$ = this.#store.select(selectCurrentPlayer)
         this.winner$ = this.#store.select(selectWinner)
+        this.winPath$ = this.#store.select(selectWinPath)
 
         ///Init local storage
         this.loadStateFromLocalStorage()
@@ -47,22 +50,19 @@ export class BoardFacade {
         this.#store.dispatch(
             boardActions.setBoardSize({ boardSize: [boardSize, boardSize] })
         )
-        this.#store.dispatch(
-            boardActions.resetGame({ boardSize: [boardSize, boardSize] })
-        )
+        this.#store.dispatch(boardActions.setWinPath({ winPath: null }))
+        this.#store.dispatch(boardActions.setWinner({ winner: null }))
         this.#store.dispatch(boardActions.setCurrentPlayer({ player: null }))
         debugger
 
         this.saveStateToLocalStorage()
     }
 
-    setEndRound(winner: 'X' | 'O' | 'none') {
-        if (winner === 'none') {
-            this.#store.dispatch(boardActions.setWinner({ winner }))
-        } else {
-            this.#store.dispatch(boardActions.setWinner({ winner }))
+    setEndRound(winner: 'X' | 'O' | 'none', path: [number, number][] = []) {
+        this.#store.dispatch(boardActions.setWinner({ winner }))
+        if (winner === 'X' || winner === 'O') {
+            this.#store.dispatch(boardActions.setWinPath({ winPath: path }))
         }
-
         this.saveStateToLocalStorage()
     }
 
@@ -81,7 +81,6 @@ export class BoardFacade {
                 const [row, col] = move
 
                 if (boardContent && currentPlayer) {
-                    debugger
                     const updatedBoardContent = boardContent.map(
                         (rowArray, rowIndex) =>
                             rowIndex === row
@@ -91,21 +90,19 @@ export class BoardFacade {
                                 : rowArray
                     )
 
-                    //set board move
                     this.#store.dispatch(
                         boardActions.setBoardContent({
                             boardContent: updatedBoardContent,
                         })
                     )
 
-                    const winner = this.gameLogic.checkWinner(
+                    const { winner, path } = this.gameLogic.checkWinner(
                         updatedBoardContent,
                         currentPlayer
                     )
 
-                    //if winner else check draw and set current player
                     if (winner) {
-                        this.setEndRound(currentPlayer)
+                        this.setEndRound(currentPlayer, path)
                     } else if (this.gameLogic.checkDraw(updatedBoardContent)) {
                         debugger
                         this.setEndRound('none')

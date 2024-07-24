@@ -26,33 +26,10 @@ export class HomeComponent implements OnInit {
     boardSize$ = this.boardFacade.boardSize$
     winner$ = this.boardFacade.winner$
 
-    canChangeGame = true
+    // canChangeGame = true
     canCreateGame = true
 
     ngOnInit() {
-        this.handleCanChangeGame()
-    }
-
-    handleStartGame(event: number): void {
-        this.boardFacade.setBoard(event)
-        this.boardFacade.setCurrentPlayer(Utils.setRandomPlayer() as 'X' | 'O')
-    }
-
-    handleCanChangeGame(): boolean {
-        this.boardFacade.winner$
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((winner) => {
-                this.canCreateGame =
-                    winner === 'X' || winner === 'O' || winner === 'none'
-            })
-
-        this.boardFacade.currentPlayer$
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((player) => {
-                this.canChangeGame = !(player === 'X' || player === 'O')
-            })
-
-        debugger
-        return this.canChangeGame && this.canCreateGame
+        // this.handleCanChangeGame()
     }
 }

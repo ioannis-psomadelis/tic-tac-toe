@@ -21,16 +21,19 @@ export class BoardComponent implements OnInit {
     boardFacade = inject(BoardFacade)
     destroyRef = inject(DestroyRef)
 
+    //facade
     boardSize$ = this.boardFacade.boardSize$
     boardContent$ = this.boardFacade.boardContent$
-    currentPlayer$ = this.boardFacade.currentPlayer$
-    winner$ = this.boardFacade.winner$
+    winPath$ = this.boardFacade.winPath$
 
     //use local vars using state interfaces
     boardContent!: BoardState['boardContent']
-    currentPlayer!: BoardState['currentPlayer']
+    winPath!: BoardState['winPath']
 
+    //Inputs
     canCreateGame = input.required<boolean>()
+    winner = input.required<BoardState['winner']>()
+    currentPlayer = input.required<BoardState['currentPlayer']>()
 
     ngOnInit(): void {
         //feed to child and helper
@@ -40,11 +43,11 @@ export class BoardComponent implements OnInit {
                 this.boardContent = boardContent
                 console.log(this.boardContent)
             })
-        this.currentPlayer$
+        this.winPath$
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((currentPlayer) => {
-                this.currentPlayer = currentPlayer
-                console.log(this.currentPlayer)
+            .subscribe((winPath) => {
+                this.winPath = winPath
+                console.log(this.winPath)
             })
     }
 
@@ -60,7 +63,15 @@ export class BoardComponent implements OnInit {
         return !(
             this.boardContent?.[row]?.[col] === 'X' ||
             this.boardContent?.[row]?.[col] === 'O' ||
-            this.currentPlayer === null
+            this.currentPlayer() === null
         )
+    }
+
+    returnWinnerCells(row: number, col: number): boolean {
+        if (this.winPath && (this.winner() === 'X' || this.winner() === 'O')) {
+            return this.winPath.some(([r, c]) => r === row && c === col)
+        } else {
+            return false
+        }
     }
 }

@@ -9,37 +9,58 @@ export class GameLogicService {
     checkWinner(
         boardContent: ('X' | 'O' | null)[][],
         player: 'X' | 'O'
-    ): boolean {
+    ): { winner: boolean; path: [number, number][] } {
+        let path: [number, number][] = []
+
         // Check rows and columns for a winner
-        debugger
         for (let i = 0; i < boardContent.length; i++) {
             let row_count = 0
             let col_count = 0
+            path = []
             for (let j = 0; j < boardContent.length; j++) {
-                if (boardContent[i][j] === player) row_count++
-                if (boardContent[j][i] === player) col_count++
+                if (boardContent[i][j] === player) {
+                    row_count++
+                    path.push([i, j])
+                }
+                if (boardContent[j][i] === player) {
+                    col_count++
+                }
             }
-            if (
-                row_count === boardContent.length ||
-                col_count === boardContent.length
-            )
-                return true
+            if (row_count === boardContent.length) return { winner: true, path }
+            path = []
+            for (let j = 0; j < boardContent.length; j++) {
+                if (boardContent[j][i] === player) {
+                    path.push([j, i])
+                }
+            }
+            if (col_count === boardContent.length) return { winner: true, path }
         }
 
         // Check diagonals for a winner
         let count = 0
         let anti_count = 0
+        path = []
         for (let i = 0; i < boardContent.length; i++) {
-            if (boardContent[i][i] === player) count++
-            if (boardContent[i][boardContent.length - i - 1] === player)
+            if (boardContent[i][i] === player) {
+                count++
+                path.push([i, i])
+            }
+            if (boardContent[i][boardContent.length - i - 1] === player) {
                 anti_count++
-            if (
-                count === boardContent.length ||
-                anti_count === boardContent.length
-            )
-                return true
+            }
         }
-        return false
+        if (count === boardContent.length) return { winner: true, path }
+
+        path = []
+        for (let i = 0; i < boardContent.length; i++) {
+            if (boardContent[i][boardContent.length - i - 1] === player) {
+                path.push([i, boardContent.length - i - 1])
+            }
+        }
+
+        if (anti_count === boardContent.length) return { winner: true, path }
+
+        return { winner: false, path: [] }
     }
 
     checkDraw(boardContent: ('X' | 'O' | null)[][]): boolean {

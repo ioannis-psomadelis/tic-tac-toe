@@ -22,6 +22,10 @@ export const boardReducer = createReducer(
         ...state,
         winner,
     })),
+    on(boardActions.setWinPath, (state, { winPath }) => ({
+        ...state,
+        winPath,
+    })),
     on(boardActions.setCurrentPlayer, (state, { player }) => ({
         ...state,
         currentPlayer: player,

@@ -5,13 +5,21 @@
     @let currentPlayer = currentPlayer$ | async;
     @let boardSize = boardSize$ | async;
     @let winner = winner$ | async;
+    @let canChangeGame = winner === 'X' || winner === 'O' || winner === 'none';
+    @let canCreateGame = winner === 'X' || winner === 'O' || winner === 'none';
 
     <app-board-info
         [canChangeGame]="canChangeGame"
         [canCreateGame]="canCreateGame"
-        (startGame)="handleStartGame($event)"
     >
     </app-board-info>
-    <app-board  [canCreateGame]="canCreateGame"></app-board>
-    <app-board-player [currentPlayer]="currentPlayer" [winner]="winner"></app-board-player>
+    <app-board
+        [canCreateGame]="canCreateGame"
+        [winner]="winner"
+        [currentPlayer]="currentPlayer"
+    ></app-board>
+    <app-board-player
+        [currentPlayer]="currentPlayer"
+        [winner]="winner"
+    ></app-board-player>
 </div>

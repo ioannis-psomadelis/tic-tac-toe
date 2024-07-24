@@ -18,6 +18,7 @@ export class CellComponent implements OnInit {
     value = input.required<BoardState['currentPlayer']>()
     canClick = input.required<boolean>()
     canCreateGame = input.required<boolean>()
+    winnerCell = input.required<boolean>()
 
     clicked = output<void>()
     // @Output() click = new EventEmitter<void>();

@@ -18,11 +18,6 @@ export const selectWinner = createSelector(
     (state) => state.winner
 )
 
-export const selectPath = createSelector(
-    selectBoardState,
-    (state) => state.path
-)
-
 export const selectCurrentPlayer = createSelector(
     selectBoardState,
     (state) => state.currentPlayer

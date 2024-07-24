@@ -9,43 +9,35 @@ import { BoardState } from '../../+state/board.state'
 
 //Components UI
 import { InfoBoxComponent } from '../../shared/ui/info-box/info-box.component'
+import { Utils } from '../../shared/utils/utils'
+import { BoardSelectionFormComponent } from './board-selection-form/board-selection-form.component'
 
 @Component({
     selector: 'app-board-info',
     standalone: true,
-    imports: [InfoBoxComponent, ReactiveFormsModule, NgClass],
+    imports: [
+        InfoBoxComponent,
+        ReactiveFormsModule,
+        NgClass,
+        BoardSelectionFormComponent,
+    ],
     templateUrl: './board-info.component.html',
     styleUrl: './board-info.component.scss',
 })
-export class BoardInfoComponent implements OnInit {
-    // boardFacade = inject(BoardFacade)
-    tableSizes = [2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-    //Injects
-    fb = inject(FormBuilder)
-
-    //Form
-    boardSizeForm!: FormGroup
+export class BoardInfoComponent {
+    boardFacade = inject(BoardFacade)
 
     //Inputs
     canChangeGame = input.required<boolean>()
     canCreateGame = input.required<boolean>()
 
-    //Outputs
-    startGame = output<number>()
+    // onStartGame() {
+    //     const size = this.boardSizeForm.get('boardSize')?.value
+    //     this.startGame.emit(size)
+    // }
 
-    ngOnInit() {
-        this.initForm()
-    }
-
-    onStartGame() {
-        const size = this.boardSizeForm.get('boardSize')?.value
-        this.startGame.emit(size)
-    }
-
-    initForm() {
-        this.boardSizeForm = this.fb.group({
-            boardSize: [3],
-        })
+    handleStartGame(event: number): void {
+        this.boardFacade.setBoard(event)
+        this.boardFacade.setCurrentPlayer(Utils.setRandomPlayer() as 'X' | 'O')
     }
 }

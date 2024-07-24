@@ -5,7 +5,7 @@
 <!--<br />-->
 <!--{{ 'boardContent:' }} {{ boardContent | json }}-->
 
-@if (board && boardContent ) {
+@if (board && boardContent) {
     <div
         class="grid"
         [ngStyle]="{
@@ -28,6 +28,7 @@
                     [canClick]="canClick(rowIndex, colIndex)"
                     [canCreateGame]="canCreateGame()"
                     [value]="row[colIndex]"
+                    [winnerCell]="returnWinnerCells(rowIndex, colIndex)"
                     (clicked)="handleSquareClick(rowIndex, colIndex)"
                 >
                 </app-cell>

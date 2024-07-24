@@ -1,7 +1,10 @@
 @let boardContent = boardContent$ | async;
 <button
-    [ngClass]="(canClick() && !canCreateGame()) ? '' : 'disabled'"
-    class="hover:bg-gray-100 text-5xl font-bold h-24 flex items-center justify-center w-full"
+    [ngClass]="{
+        'disabled': !(canClick() && !canCreateGame()),
+        'text-red-500': winnerCell(),
+    }"
+    class=" hover:bg-gray-100 text-5xl font-bold h-32 flex items-center justify-center select-none w-full"
     (click)="onClick()"
 >
     {{ value() }}
