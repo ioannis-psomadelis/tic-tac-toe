@@ -40,3 +40,10 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# prettier
+.prettierrc
+
+# lock files
+yarn.lock
+package-lock.json
