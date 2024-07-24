@@ -11,7 +11,6 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The appli
 ### Requirements
 
 1. Node > v18.19 `https://nodejs.org/en/download/`
-2. Angular CLI v18.1.1 `https://www.npmjs.com/package/@angular/cli/v/18.1.1`
 
 ### Installation
 
