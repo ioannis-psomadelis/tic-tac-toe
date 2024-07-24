@@ -23,9 +23,5 @@ export const boardReducer = createReducer(
     on(boardActions.setCurrentPlayer, (state, { player }) => ({
         ...state,
         currentPlayer: player,
-    })),
-    on(boardActions.playerMove, (state, { move }) => ({
-        ...state,
-        move,
     }))
 )

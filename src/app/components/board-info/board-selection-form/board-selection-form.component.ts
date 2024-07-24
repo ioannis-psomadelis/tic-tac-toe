@@ -58,7 +58,7 @@ export class BoardSelectionFormComponent implements OnInit {
 
     initForm() {
         this.boardSizeForm = this.fb.group({
-            boardSize: [3],
+            boardSize: [null],
         })
     }
 
