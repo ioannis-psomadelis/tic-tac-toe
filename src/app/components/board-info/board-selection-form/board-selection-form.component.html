@@ -2,6 +2,7 @@
     <div class="relative h-10 w-auto min-w-[150px]">
         <select
             id="boardSize"
+            name="boardSize"
             formControlName="boardSize"
             [ngClass]="
                 !(canChangeGame() || canCreateGame())
@@ -9,6 +10,8 @@
                     : ''
             "
             class="peer w-full rounded-[7px] border border-t-transparent bg-transparent px-3 py-2.5 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0"
+            (change)="onChangeBoardSize(boardSizeForm.get('boardSize')?.value)"
+            required
         >
             @for (boardSize of tableSizes; track boardSize) {
                 <option

@@ -6,6 +6,7 @@
                 [canChangeGame]="canChangeGame()"
                 [canCreateGame]="canCreateGame()"
                 (startGame)="handleStartGame($event)"
+                (changeBoardSize)="handleChangeBoardSize($event)"
             ></app-board-selection-form>
         </div>
     </div>

@@ -31,13 +31,12 @@ export class BoardInfoComponent {
     canChangeGame = input.required<boolean>()
     canCreateGame = input.required<boolean>()
 
-    // onStartGame() {
-    //     const size = this.boardSizeForm.get('boardSize')?.value
-    //     this.startGame.emit(size)
-    // }
-
     handleStartGame(event: number): void {
-        this.boardFacade.setBoard(event)
+        this.handleChangeBoardSize(event)
         this.boardFacade.setCurrentPlayer(Utils.setRandomPlayer() as 'X' | 'O')
+    }
+
+    handleChangeBoardSize(event: number): void {
+        this.boardFacade.setBoard(event)
     }
 }

@@ -17,6 +17,11 @@ import { NgClass } from '@angular/common'
 export class BoardSelectionFormComponent {
     tableSizes = [2, 3, 4, 5, 6, 7, 8, 9, 10]
 
+    //Getters
+    get boardSize(): number {
+        return this.boardSizeForm.get('boardSize')?.value
+    }
+
     //Injects
     fb = inject(FormBuilder)
 
@@ -29,13 +34,18 @@ export class BoardSelectionFormComponent {
 
     //Outputs
     startGame = output<number>()
+    changeBoardSize = output<number>()
 
     ngOnInit() {
         this.initForm()
     }
+
+    onChangeBoardSize(event: number): void {
+        this.changeBoardSize.emit(event)
+    }
+
     onStartGame() {
-        const size = this.boardSizeForm.get('boardSize')?.value
-        this.startGame.emit(size)
+        this.startGame.emit(this.boardSize)
     }
 
     initForm() {

@@ -27,7 +27,7 @@ export class HomeComponent implements OnInit {
     winner$ = this.boardFacade.winner$
 
     // canChangeGame = true
-    canCreateGame = true
+    // canCreateGame = true
 
     ngOnInit() {
         // this.handleCanChangeGame()
