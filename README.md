@@ -2,10 +2,6 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.1.1.
 
-## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
-
 ## Project setup
 
 ### Requirements
@@ -18,6 +14,7 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The appli
 2. Navigate to the project directory using `cd tic-tac-toe`.
 3. Install the project dependencies using `yarn` or `npm i` or `bun i`.
 4. Start the development server using `ng serve`.
+5. Open `http://localhost:4200/` in your browser.
 
 ### Live Showcase Demo
 
